@@ -24,3 +24,232 @@ library(gt)
 
 devtools::install_github("rosovconsulting/rchelperfunctions")
 ```
+
+
+```{r}
+#| include: false
+survey_data <- read_rds("Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
+
+merged_col_map <- labelled::var_label(survey_data) %>% # use var_label to get variable names and labels
+  as_tibble() %>% # set as tibble
+  pivot_longer(cols = everything(),
+               names_to = "Item",
+               values_to = "Label") %>% # pivot the tibble into a longer format
+  mutate(Label = gsub(pattern = '.*. - ', "", Label))
+
+```
+
+
+## Part I: Demographics
+
+```{r}
+survey_data %>% 
+    tabyl(q1, show_na = FALSE) %>% 
+    table_style(., "How many of your children attended this school?")
+
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q2, show_na = FALSE) %>% 
+    table_style(., "What is your relationship to your children at this school?")
+
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q3, show_na = FALSE) %>% 
+    table_style(., "Your gender")
+
+```
+
+```{r}
+multi_response_table(survey_data, mdset_p("q4_\\d$")) %>% 
+    mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
+    multi_response_table_style() %>% 
+    tab_header("Parent's ancestry")
+
+```
+
+
+```{r}
+multi_response_table(survey_data, mdset_p("q5_\\d$")) %>% 
+    mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
+    multi_response_table_style() %>% 
+    tab_header("Child's ancestry")
+
+```
+
+```{r}
+multi_response_table(survey_data, mdset_p("q6_\\d\\d?$")) %>% 
+    mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
+    multi_response_table_style() %>% 
+    tab_header("Child's historical Jewish community")
+
+```
+
+
+```{r}
+survey_data %>% 
+    tabyl(q10, show_na = FALSE) %>% 
+    table_style(., "What is your highest educational degree?")
+
+```
+
+```{r}
+survey_data %>%
+    select(matches("q11_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "Parent's Language Ability")
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q13, show_na = FALSE) %>% 
+    table_style(., "Family Synagogue Attendance")
+
+```
+
+```{r}
+multi_response_table(survey_data, mdset_p("q14_\\d\\d?$")) %>% 
+    mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
+    multi_response_table_style() %>% 
+    tab_header("Type of synagogue attended")
+
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q15, show_na = FALSE) %>% 
+    table_style(., "Sent to Jewish sleepaway camp")
+
+```
+
+```{r}
+survey_data %>% 
+    mutate(q16 = as.character(q16)) %>%
+    mutate(q16 = na_if(q16, c("", "I don't remember", "n"))) %>% 
+    tabyl(q16, show_na = FALSE) %>% 
+    table_style(., "Sent to Jewish sleepaway camp")
+
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q17, show_na = FALSE) %>% 
+    table_style(., "Parent's Political Orientation")
+
+```
+
+## Part II
+```{r}
+survey_data %>% 
+    tabyl(q7, show_na = FALSE) %>% 
+    table_style(., "Eldest Child's birthplace")
+
+```
+
+Somewhere else entries:
+- 1 born in Israel; 3 born in America
+- Mexico
+```{r}
+survey_data %>% 
+    tabyl(q8, show_na = FALSE) %>% 
+    table_style(., "Number of child's parents born in USA")
+
+```
+
+```{r}
+survey_data %>% 
+    tabyl(q9, show_na = FALSE) %>% 
+    table_style(., "Number of child's grandparents born in USA")
+
+```
+
+
+```{r}
+survey_data %>%
+    select(matches("q12_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "Child's Language Ability")
+```
+
+
+```{r}
+survey_data %>%
+    select(matches("qid22_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+```{r}
+survey_data %>%
+    select(matches("qid24_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+
+```{r}
+survey_data %>%
+    select(matches("qid25_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+
+```{r}
+survey_data %>%
+    select(matches("qid26_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+
+```{r}
+survey_data %>%
+    select(matches("qid27_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+```{r}
+survey_data %>%
+    select(matches("qid28_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+```{r}
+survey_data %>%
+    select(matches("q35_\\d\\d?$")) %>% 
+    likert_table() %>% 
+    likert_table_style(., "")
+```
+
+## Part III
+
+### What are some ways that your school is inclusive of students from diverse ethnic and cultural backgrounds?
+```{r}
+open_ends_table(survey_data, q3_1)
+
+```
+
+### What are some ways that your school is not inclusive of students from diverse ethnic and cultural backgrounds?
+```{r}
+open_ends_table(survey_data, q3_2)
+
+```
+
+### What are some questions you have about inclusion of Sephardi/Mizrahi students and families?
+
+```{r}
+open_ends_table(survey_data, q3_3)
+
+```
+
+### What suggestions do you have for making your school more inclusive of Sephardi/Mizrahi students and families?
+```{r}
+open_ends_table(survey_data, q3_4)
+
+```
