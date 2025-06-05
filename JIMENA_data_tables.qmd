@@ -1,0 +1,26 @@
+---
+title: "JIMENA Parent Survey Data Tables"
+execute:
+  echo: false
+  warnings: false
+  error: false
+format:   
+    html:
+        css: rcstyle.css
+        theme: spacelab
+        warning: false
+        toc: true
+        code-fold: true
+
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+library(rchelperfunctions)
+library(janitor)
+library(expss)
+library(gt)
+
+devtools::install_github("rosovconsulting/rchelperfunctions")
+```
