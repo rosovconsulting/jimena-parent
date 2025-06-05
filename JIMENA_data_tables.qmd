@@ -10,6 +10,7 @@ format:
         theme: spacelab
         warning: false
         toc: true
+        toc-depth: 3
         code-fold: true
 
 ---
@@ -30,7 +31,7 @@ devtools::install_github("rosovconsulting/rchelperfunctions")
 #| include: false
 survey_data <- read_rds("Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
 
-merged_col_map <- labelled::var_label(survey_data) %>% # use var_label to get variable names and labels
+merged_col_map <- labelled::var_label(survey_data, null_action = "fill") %>% # use var_label to get variable names and labels
   as_tibble() %>% # set as tibble
   pivot_longer(cols = everything(),
                names_to = "Item",
@@ -141,7 +142,7 @@ survey_data %>%
 
 ```
 
-## Part II
+## Part II: Children
 ```{r}
 survey_data %>% 
     tabyl(q7, show_na = FALSE) %>% 
@@ -227,7 +228,7 @@ survey_data %>%
     likert_table_style(., "")
 ```
 
-## Part III
+## Part III: Open Ended Questions
 
 ### What are some ways that your school is inclusive of students from diverse ethnic and cultural backgrounds?
 ```{r}
@@ -252,4 +253,45 @@ open_ends_table(survey_data, q3_3)
 ```{r}
 open_ends_table(survey_data, q3_4)
 
+```
+
+## Part IV: Inclusion Score
+
+```{r}
+survey_data %>%
+  filter(!is.na(inclusion_score)) %>%
+  group_by(school) %>%
+  summarise(
+    valid_n = sum(!is.na(inclusion_score)),
+    mean = mean(inclusion_score),
+    sd = sd(inclusion_score),
+    minimum = min(inclusion_score),
+    maximum = max(inclusion_score)
+  ) %>%
+  ungroup() %>%
+  gt::gt() %>%
+  cols_label(
+    valid_n = "Valid N",
+    mean = "Mean",
+    sd = "Standard Deviation",
+    minimum = "Minimum",
+    maximum = "Maximum"
+  ) %>%
+  fmt_number(
+    columns = c(mean, sd),
+    decimals = 2
+  ) %>%
+  gt::cols_align(align = "left", columns = 1) %>%
+  tab_header("Inclusion Score by School") %>%
+  gt::tab_style(
+    style = list(
+      gt::cell_text(color = "white", weight = "bold"),
+      gt::cell_fill(color = "#5C068C")
+    ),
+    locations = gt::cells_title("title")
+  ) %>%
+  gt::tab_options(table.align = "left", data_row.padding = gt::px(5)) %>%
+  gt::opt_table_lines()
+    
+  
 ```
