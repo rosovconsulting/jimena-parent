@@ -180,6 +180,8 @@ survey_data_6 <- survey_data_5 %>%
 
 ## Put variable labels back on
 var_label(survey_data_6) <- variable_labels
+var_label(survey_data_6) <- variable_labels
 
+write_rds(survey_data_6, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
 write_rds(survey_data_6, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
 
