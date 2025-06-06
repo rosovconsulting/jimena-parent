@@ -83,8 +83,101 @@ survey_data_4 <- survey_data_3 %>%
   select(-matches("\\d_score"))
   
 
-## Put variable labels back on
-var_label(survey_data_4) <- variable_labels
+## create mutually exclusive Jewish Ethnicity variable
 
-write_rds(survey_data_4, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
+survey_data_5 <- survey_data_4 %>% 
+  mutate(q4_3 = case_when(
+    q4_4_text == "Perisan" ~ "Mizrahi",
+    q4_4_text == "Persian" ~ "Mizrahi",
+    q4_4_text == "Persian jew" ~ "Mizrahi",
+    .default = q4_3
+  )) %>% 
+  mutate(q4_4 = case_when(
+    q4_4_text == "Perisan" ~ NA,
+    q4_4_text == "Persian" ~ NA,
+    q4_4_text == "Persian jew" ~ NA,
+    .default = q4_4
+  )) %>% 
+  mutate(q4_parent_ethnicity = case_when(
+    q4_5 == "Not Jewish" ~ "Not Jewish",
+    q4_1 == "Ashkenazi" & is.na(q4_2) & is.na(q4_3) & is.na(q4_4) ~ "Only Ashkenazi",
+    q4_1 == "Ashkenazi" & (q4_2 == "Sephardi" | q4_3 == "Mizrahi") ~ "Mixed Heritage",
+    q4_2 == "Sephardi" | q4_3 == "Mizrahi" ~ "Sephardi/Mizrahi",
+  ))
+
+
+survey_data_5 <- survey_data_4 %>% 
+  mutate(q5_3 = case_when(
+    q5_4_text == "Per" ~ "Mizrahi",
+    q5_4_text == "Persian" ~ "Mizrahi",
+    q5_4_text == "Persian Jews" ~ "Mizrahi",
+    .default = q5_3
+  )) %>% 
+  mutate(q5_4 = case_when(
+    q5_4_text == "Per" ~ NA,
+    q5_4_text == "Persian" ~ NA,
+    q5_4_text == "Persian Jews" ~ NA,
+    .default = q5_4
+  )) %>% 
+  mutate(q5_1 = case_when(
+    q5_4_text == "Ashkenazi and Sephardi" ~ "Ashkenazi",
+    q5_4_text == "Mixed Ashkenazi and Sephardic" ~ "Ashkenazi",,
+    .default = q5_1
+  )) %>% 
+  mutate(q5_2 = case_when(
+    q5_4_text == "Ashkenazi and Sephardi" ~ "Sephardi",
+    q5_4_text == "Mixed Ashkenazi and Sephardic" ~ "Sephardi",
+    .default = q5_2
+  )) %>% 
+  mutate(q5_child_ethnicity = case_when(
+    q5_5 == "Not Jewish" ~ "Not Jewish",
+    q5_1 == "Ashkenazi" & is.na(q5_2) & is.na(q5_3) & is.na(q5_4) ~ "Only Ashkenazi",
+    q5_1 == "Ashkenazi" & (q5_2 == "Sephardi" | q5_3 == "Mizrahi") ~ "Mixed Heritage",
+    q5_2 == "Sephardi" | q5_3 == "Mizrahi" ~ "Sephardi/Mizrahi",
+  ))
+
+
+## Create mutually exclusive ancestral origin variable
+survey_data_6 <- survey_data_5 %>% 
+  mutate(q6_ancestral_origin_israel = case_when(
+      q6_9 == "Israel (immigration to US 1970s or later)" ~ "Israel",
+      .default = NA
+  )) %>% 
+  mutate(q6_ancestral_origin_european = case_when(
+    q6_3 == "Central or Eastern Europe (Ashkenazi)" ~ "European Diaspora",
+    q6_5 == "Georgia (in eastern Europe)" ~ "European Diaspora",
+    q6_6 == "Greece (Romaniote)" ~ "European Diaspora",
+    q6_10 == "Italy (Italian rite)" ~ "European Diaspora",
+    q6_14 == "Ottoman Sephardi (Greece, Turkey, Rhodes, Bulgaria, Yugoslavia)" ~ "European Diaspora",
+    q6_16 == "Russia (immigration to US 1970s or later)" ~ "European Diaspora",
+  )) %>% 
+  mutate(q6_ancestral_origin_mena = case_when(
+    q6_2 == "Bukharia (Uzbekistan, Tajikistan)" ~ "MENA Diaspora",
+    q6_4 == "Ethiopia" ~ "MENA Diaspora",
+    q6_7 == "India" ~ "MENA Diaspora",
+    q6_8 == "Iraq" ~ "MENA Diaspora",
+    q6_11 == "Juhuro (Azerbaijan, Dagestan)" ~ "MENA Diaspora",
+    q6_12 == "Kurdistan" ~ "MENA Diaspora",
+    q6_13 == "North Africa (Morocco, Algeria, Tunisia, Libya, Egypt)" ~ "MENA Diaspora",
+    q6_15 == "Persia/Iran" ~ "MENA Diaspora",
+    q6_17 == "Syria/Lebanon" ~ "MENA Diaspora",
+    q6_18 == "Yemen" ~ "MENA Diaspora"
+  )) %>% 
+  mutate(q6_ancestral_origin_none = case_when(
+    q6_1 == "None (no Jewish ancestors)" ~ "No Jewish Ancestry",
+  )) %>% 
+  mutate(q6_ancestral_origin = case_when(
+    q6_ancestral_origin_israel == "Israel" ~ "Israel",
+    q6_ancestral_origin_none == "No Jewish Ancestry" ~ "No Jewish Ancestry",
+    q6_ancestral_origin_european == "European Diaspora" & q6_ancestral_origin_mena == "MENA Diaspora" ~ "Both European and MENA Diaspora",
+    q6_ancestral_origin_european == "European Diaspora" ~ "European Diaspora",
+    q6_ancestral_origin_mena == "MENA Diaspora" ~ "MENA Diaspora",
+    .default = NA
+  ))
+
+
+## Put variable labels back on
+var_label(survey_data_6) <- variable_labels
+
+write_rds(survey_data_6, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
 
