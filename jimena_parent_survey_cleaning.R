@@ -10,8 +10,10 @@ view_summary_browser <- function(data, name = deparse(substitute(data))){
 }
 
 
+data_path <- file.path(Sys.getenv("DROPBOX_PATH", unset = "."), "Projects", "277-04 JIMENA Sephardi and Mizrahi Kids in LA Day Schools", "Databases and Data Files", "Parent Survey")
+
 ## Read in .sav file downloaded from Qualtrics
-raw_survey_data <- read_sav("Data/277-04_JIMENA_RAW_Parent_Survey_data_20250605.sav") %>% 
+raw_survey_data <- read_sav(paste0(data_path, "/277-04_JIMENA_RAW_Parent_Survey_data_20250605.sav")) %>% 
   clean_names() %>% 
   as_factor()
 
@@ -181,7 +183,9 @@ survey_data_7 <- survey_data_6 %>%
 ## Put variable labels back on
 var_label(survey_data_7) <- variable_labels
 
+write_rds(survey_data_7, paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds"))
 
-write_rds(survey_data_7, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
-
+survey_data_7 %>% 
+  mutate(across(c(`q6_19_text`, `q3_1`, `q3_2`, `q3_3`, `q3_4`), ~as.character(.))) %>%
+  haven::write_sav(., paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.sav"))
 
