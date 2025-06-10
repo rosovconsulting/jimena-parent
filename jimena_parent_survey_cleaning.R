@@ -107,7 +107,7 @@ survey_data_5 <- survey_data_4 %>%
   mutate(q4_parent_ethnicity = factor(q4_parent_ethnicity, levels = c("Only Ashkenazi", "Sephardi/Mizrahi", "Mixed Heritage", "Not Jewish")))
 
 
-survey_data_5 <- survey_data_4 %>% 
+survey_data_6 <- survey_data_5 %>% 
   mutate(q5_3 = case_when(
     q5_4_text == "Per" ~ "Mizrahi",
     q5_4_text == "Persian" ~ "Mizrahi",
@@ -140,7 +140,7 @@ survey_data_5 <- survey_data_4 %>%
 
 
 ## Create mutually exclusive ancestral origin variable
-survey_data_6 <- survey_data_5 %>% 
+survey_data_7 <- survey_data_6 %>% 
   mutate(q6_ancestral_origin_israel = case_when(
       q6_9 == "Israel (immigration to US 1970s or later)" ~ "Israel",
       .default = NA
@@ -179,9 +179,9 @@ survey_data_6 <- survey_data_5 %>%
   mutate(q6_ancestral_origin = factor(q6_ancestral_origin, levels = c("Israel", "Both European and MENA Diaspora", "European Diaspora", "MENA Diaspora", "No Jewish Ancestry")))
 
 ## Put variable labels back on
-var_label(survey_data_6) <- variable_labels
-var_label(survey_data_6) <- variable_labels
+var_label(survey_data_7) <- variable_labels
 
-write_rds(survey_data_6, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
-write_rds(survey_data_6, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
+
+write_rds(survey_data_7, "Data/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds")
+
 
