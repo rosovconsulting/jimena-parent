@@ -68,7 +68,7 @@ survey_data %>%
 multi_response_table(survey_data, mdset_p("q4_\\d$")) %>% 
     mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
     multi_response_table_style() %>% 
-    tab_header("Parent's ancestry")
+    tab_header("Parent's Jewish Ethnicity")
 
 ```
 
@@ -77,7 +77,7 @@ multi_response_table(survey_data, mdset_p("q4_\\d$")) %>%
 multi_response_table(survey_data, mdset_p("q5_\\d$")) %>% 
     mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
     multi_response_table_style() %>% 
-    tab_header("Child's ancestry")
+    tab_header("Child's Jewish Ethnicity")
 
 ```
 
@@ -85,7 +85,7 @@ multi_response_table(survey_data, mdset_p("q5_\\d$")) %>%
 multi_response_table(survey_data, mdset_p("q6_\\d\\d?$")) %>% 
     mutate(q = str_remove(q, "^.+ - Selected Choice ")) %>% 
     multi_response_table_style() %>% 
-    tab_header("Child's historical Jewish community")
+    tab_header("Child's Ancestral Origin")
 
 ```
 
@@ -295,3 +295,256 @@ survey_data %>%
     
   
 ```
+
+
+## Part V: Items by Jewish Ethnicity and Ancestral Origin
+
+```{r}
+# survey_data %>%
+#   select(q4_parent_ethnicity, matches("qid22_\\d\\d?$")) %>%
+#   likert_table(cross = q4_parent_ethnicity) %>%
+#   left_join(., merged_col_map) %>%
+#   dplyr::select(-Item, -N) %>%
+#   dplyr::select(Label, tidyselect::everything()) %>%
+#   dplyr::rename(Item = Label) %>%
+#   filter(!is.na(Group)) %>%
+#   pivot_wider(
+#     names_from = Group,
+#     names_glue = "{.value}_{Group}",
+#     values_from = c(
+#       "Strongly agree",
+#       "Agree",
+#       "Neither agree nor disagree",
+#       "Disagree",
+#       "Strongly disagree"
+#     )
+#   ) %>%
+#   gt::gt(rowname_col = "Item") %>% 
+#   tab_spanner(
+#     label = "Only Ashkenazi",
+#     columns = ends_with("_Only Ashkenazi")) %>% 
+#   tab_spanner(
+#       label = "Sephardi/Mizrahi",
+#       columns = ends_with("_Sephardi/Mizrahi")) %>% 
+#   tab_spanner(
+#       label = "Mixed Heritage",
+#       columns = ends_with("_Mixed Heritage")) %>% 
+#   tab_spanner(
+#       label = "Not Jewish",
+#       columns = ends_with("_Not Jewish"))
+   
+```
+
+```{r}
+ethnicity_tables = function(data, cross_var) {
+
+  data %>%
+    left_join(., merged_col_map) %>%
+    dplyr::select(-Item) %>%
+    dplyr::select(Label, tidyselect::everything()) %>%
+    dplyr::rename(Item = Label) %>%
+    filter(!is.na(Group)) %>%
+    gt::gt(
+      rowname_col = "Group",
+      groupname_col = "Item",
+      row_group_as_column = TRUE
+    ) %>%
+    fmt_percent(
+      columns = where(is.numeric),
+      decimals = 0
+    ) 
+}
+
+```
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid22_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid22_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid22_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid24_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid24_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid24_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid25_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid25_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid25_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid26_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid26_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid26_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid27_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid27_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid27_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("qid28_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("qid28_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("qid28_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+
+
+```{r}
+survey_data %>%
+    select(q4_parent_ethnicity, matches("q35_\\d\\d?$")) %>%
+    likert_table(cross = q4_parent_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q4_parent_ethnicity) %>%
+    tab_header("Parent's Jewish Ethnicity")
+```
+
+
+```{r}
+survey_data %>%
+    select(q5_child_ethnicity, matches("q35_\\d\\d?$")) %>%
+    likert_table(cross = q5_child_ethnicity, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q5_child_ethnicity) %>%
+    tab_header("Child's Jewish Ethnicity")
+```
+
+```{r}
+survey_data %>%
+    select(q6_ancestral_origin, matches("q35_\\d\\d?$")) %>%
+    likert_table(cross = q6_ancestral_origin, include_ns = FALSE) %>%
+    ethnicity_tables(., cross_var = q6_ancestral_origin) %>%
+    tab_header("Child's Ancestral Origin")
+```
+
+
+
+
+
