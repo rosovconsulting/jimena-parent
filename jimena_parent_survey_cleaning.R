@@ -19,7 +19,6 @@ raw_survey_data <- read_sav(paste0(data_path, "/277-04_JIMENA_RAW_Parent_Survey_
 
 ## Filter incomplete responses
 survey_data_1 <- raw_survey_data %>% 
-  filter(progress > 70) %>% 
   select(response_id, school, q1:q3_4)
 
 ## save variable labels for later
@@ -183,9 +182,9 @@ survey_data_7 <- survey_data_6 %>%
 ## Put variable labels back on
 var_label(survey_data_7) <- variable_labels
 
-write_rds(survey_data_7, paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.rds"))
+write_rds(survey_data_7, paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250625.rds"))
 
 survey_data_7 %>% 
   mutate(across(c(`q6_19_text`, `q3_1`, `q3_2`, `q3_3`, `q3_4`), ~as.character(.))) %>%
-  haven::write_sav(., paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_20250605.sav"))
+  haven::write_sav(., paste0(data_path, "/277-04_JIMENA_Cleaned_Parent_Survey_Data_MB_20250625.sav"))
 
